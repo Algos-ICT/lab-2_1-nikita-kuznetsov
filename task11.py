@@ -1,18 +1,18 @@
 
 
-def find_max_weight(capacity: int, ingots: list[int], max_weight: int = 0) -> int:
-    # if all ingots processed return max_weight
-    if not ingots:
-        return max_weight
+def find_max_weight(capacity: int, ingots: list[int]) -> int:
+    taken = [[True] + [False] * capacity]
 
-    # finding heaviest ingot and check if it fits
-    heaviest = max(ingots)
-    if max_weight + heaviest <= capacity:
-        max_weight += heaviest
+    for ingot in ingots:
+        taken.append(taken[-1][:])
 
-    # removing heaviest anyway and processing other ingots
-    ingots.remove(heaviest)
-    return find_max_weight(capacity, ingots, max_weight)
+        for weight in range(ingot, capacity + 1):
+            taken[-1][weight] = taken[-2][weight] or taken[-2][weight - ingot]
+        taken = taken[-1:]
+
+    for weight in range(capacity, -1, -1):
+        if taken[-1][weight]:
+            return weight
 
 
 if __name__ == '__main__':
